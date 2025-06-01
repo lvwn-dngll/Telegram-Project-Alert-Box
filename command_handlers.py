@@ -26,12 +26,33 @@ async def send_message_phase_2(update: Update, context: ContextTypes.DEFAULT_TYP
     return ConversationHandler.END
 
 #Sent background command handlers
+
+#create dictionary:
+background = {
+    "Eating" : "background_1",
+    "Sleeping" : "background_2",
+    "Studying" : "background_3",
+    "Playing" : "background_4",
+    "Travelling" : "background_5",
+    "Watching" : "background_6",
+    "Love" : "background_7",
+    "Sad" : "background_8",
+    "Hungry" : "background_9",
+    "Happy" : "background_10",
+}
 async def set_background(update: Update, context: ContextTypes.DEFAULT_TYPE):
    #create custom keyboard:
    keyboard = [
-        [InlineKeyboardButton("Morning Background", callback_data = "background_1")],
-        [InlineKeyboardButton("Afternoon Background", callback_data = "background_2")],
-        [InlineKeyboardButton("Evening Background", callback_data = "background_3")],
+        [InlineKeyboardButton("Eating", callback_data = "Eating")],
+        [InlineKeyboardButton("Sleeping", callback_data = "Sleeping")],
+        [InlineKeyboardButton("Studying", callback_data = "Studying")],
+        [InlineKeyboardButton("Playing", callback_data = "Playing")],
+        [InlineKeyboardButton("Travelling", callback_data = "Travelling")],
+        [InlineKeyboardButton("Watching", callback_data = "Watching")],
+        [InlineKeyboardButton("Love", callback_data = "Love")],
+        [InlineKeyboardButton("Sad", callback_data = "Sad")],
+        [InlineKeyboardButton("Hungry", callback_data = "Hungry")],
+        [InlineKeyboardButton("Happy", callback_data = "Happy")],
         [InlineKeyboardButton("Cancel", callback_data = "cancel")]
    ]
 
@@ -49,14 +70,11 @@ async def set_background_phase_2(update: Update, context: ContextTypes.DEFAULT_T
         m.CURRENT_BACKGROUND = response.data
 
         #add third party background change here
-        m.mqtt_client.publish(m.mqtt_topic_background, m.CURRENT_BACKGROUND, retain = True)
+        m.mqtt_client.publish(m.mqtt_topic_background, background[m.CURRENT_BACKGROUND], retain = True)
 
         #respond if done successfuly
-        currentBackground = None
-        if m.CURRENT_BACKGROUND == 'background_1': currentBackground = "Morning Background"
-        if m.CURRENT_BACKGROUND == 'background_2': currentBackground = "Afternoon Background"
-        if m.CURRENT_BACKGROUND == 'background_3': currentBackground = "Evening Background"
-    
+        currentBackground = m.CURRENT_BACKGROUND
+        
         await response.edit_message_text(text = "The background changed to \"" + currentBackground + "\".")
 
 #Cancel Operation
@@ -69,8 +87,5 @@ async def show_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Current message set: \"" + m.CURRENT_MESSAGE + "\".")
 
 async def show_background(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    currentBackground = None
-    if m.CURRENT_BACKGROUND == 'background_1': currentBackground = "Morning Background"
-    if m.CURRENT_BACKGROUND == 'background_2': currentBackground = "Afternoon Background"
-    if m.CURRENT_BACKGROUND == 'background_3': currentBackground = "Evening Background"
+    currentBackground = m.CURRENT_BACKGROUND
     await update.message.reply_text("Current background set: \"" + currentBackground + "\".")
