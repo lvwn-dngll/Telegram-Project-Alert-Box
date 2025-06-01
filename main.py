@@ -19,8 +19,9 @@ mqtt_topic_message = "Telegram_Alertbox_Project/message"
 mqtt_topic_background = "Telegram_Alertbox_Project/background"
 
 #mqtt initialization
-mqtt_client = mqtt.Client()
+mqtt_client = mqtt.Client(client_id="", protocol=mqtt.MQTTv5)
 mqtt_client.connect(mqtt_broker, mqtt_port, 60)
+mqtt_client.loop_start()
 
 #global variables to be sent to the box:
 CURRENT_MESSAGE = "sample_text"
