@@ -1,15 +1,26 @@
 import os
 import command_handlers as telegram_commands
-
+import paho.mqtt.client as mqtt
 from typing import Final
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes, ConversationHandler
 
+#loads the .env file
 load_dotenv()
 
 #load the TOKEN file
 TOKEN : Final= os.getenv("TOKEN")
+
+#mqtt broker variables
+mqtt_broker = "test.mosquitto.org"
+mqtt_port = 1883
+mqtt_topic_message = "Telegram_Alertbox_Project/message"
+mqtt_topic_background = "Telegram_Alertbox_Project/background"
+
+#mqtt initialization
+mqtt_client = mqtt.Client()
+mqtt_client.connect(mqtt_broker, mqtt_port, 60)
 
 #global variables to be sent to the box:
 CURRENT_MESSAGE = "sample_text"
