@@ -34,7 +34,7 @@ ONRENDER_URL = 'https://telegram-project-alert-box.onrender.com'
 
 #creates Flask app
 app_flask = Flask(__name__)
-@app.route('/')
+@app_flask.route('/')
 def home():
     return "callback_ping", 200
 
