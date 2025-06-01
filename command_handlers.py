@@ -17,7 +17,7 @@ async def send_message_phase_2(update: Update, context: ContextTypes.DEFAULT_TYP
     m.CURRENT_MESSAGE = response
 
     #send to third party integrated application here
-    m.mqtt_client.publish(m.mqtt_topic_message, m.CURRENT_MESSAGE)
+    m.mqtt_client.publish(m.mqtt_topic_message, m.CURRENT_MESSAGE, retain = True)
 
     #respond to the user succesfull (add error here later).
     await update.message.reply_text("The message was set to: \"" + m.CURRENT_MESSAGE + "\".")
@@ -49,7 +49,7 @@ async def set_background_phase_2(update: Update, context: ContextTypes.DEFAULT_T
         m.CURRENT_BACKGROUND = response.data
 
         #add third party background change here
-        m.mqtt_client.publish(m.mqtt_topic_background, m.CURRENT_BACKGROUND)
+        m.mqtt_client.publish(m.mqtt_topic_background, m.CURRENT_BACKGROUND, retain = True)
 
         #respond if done successfuly
         currentBackground = None
