@@ -1,6 +1,8 @@
 import os
 import command_handlers as telegram_commands
+import threading, time, requests
 import paho.mqtt.client as mqtt
+from flask import Flask
 from typing import Final
 from dotenv import load_dotenv
 from telegram import Update
@@ -27,9 +29,34 @@ mqtt_client.loop_start()
 CURRENT_MESSAGE = "sample_text"
 CURRENT_BACKGROUND = "background_1"
 
-#Starts the app 
+#Self ping for the bot to keep itself alive
+ONRENDER_URL = 'https://telegram-project-alert-box.onrender.com'
 
+#creates Flask app
+app_flask = Flask(__name__)
+@app.route('/')
+def home():
+    return "callback_ping", 200
+
+#Starts flask app and its functions
+def keep_alive():
+    while True:
+        try:
+            #keep alive request
+            requests.get(ONRENDER_URL)
+        except Exception as e:
+            print(e)
+        #for 5 mins sleep:
+        time.sleep(300)
+
+def run_flask():
+    app_flask.run(host = "0.0.0.0", port = 10000)
+
+#Starts the app 
 if __name__ == "__main__":
+    threading.Thread(target = run_flask, daemon = True).start()
+    threading.Thread(target = keep_alive, daemon = True).start()
+
     app = Application.builder().token(TOKEN).build()
 
     #define conversation handlers
