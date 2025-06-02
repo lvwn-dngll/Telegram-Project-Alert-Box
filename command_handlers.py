@@ -8,12 +8,19 @@ ASK_VARIABLE = 1
 #send message command handlers
 async def send_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #conversation:
-    await update.message.reply_text("Please enter the message to be sent (type /cancel to cancel):")
+    await update.message.reply_text("Please enter the message to be sent (type /cancel to cancel), max 63 characters:")
     return ASK_VARIABLE
 
 async def send_message_phase_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #updating the text:
     response = update.message.text
+
+    #if response is longer than 21 * 3 = 63 characters, restart
+    if(len(response) > 63):
+        await update.message.reply_text("The message exceeded the maximum characters(63). Please try again or /cancel to cancel:")
+        return ASK_VARIABLE
+
+
     m.CURRENT_MESSAGE = response
 
     #send to third party integrated application here
@@ -29,6 +36,7 @@ async def send_message_phase_2(update: Update, context: ContextTypes.DEFAULT_TYP
 
 #create dictionary:
 background = {
+    "None" : "background_0",
     "Eating" : "background_1",
     "Sleeping" : "background_2",
     "Studying" : "background_3",
@@ -43,6 +51,7 @@ background = {
 async def set_background(update: Update, context: ContextTypes.DEFAULT_TYPE):
    #create custom keyboard:
    keyboard = [
+        [InlineKeyboardButton("None", callback_data = "None")],
         [InlineKeyboardButton("Eating", callback_data = "Eating")],
         [InlineKeyboardButton("Sleeping", callback_data = "Sleeping")],
         [InlineKeyboardButton("Studying", callback_data = "Studying")],
@@ -53,7 +62,7 @@ async def set_background(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Sad", callback_data = "Sad")],
         [InlineKeyboardButton("Hungry", callback_data = "Hungry")],
         [InlineKeyboardButton("Happy", callback_data = "Happy")],
-        [InlineKeyboardButton("Cancel", callback_data = "cancel")]
+        [InlineKeyboardButton("Cancel", callback_data = "Cancel")]
    ]
 
    reply_markup = InlineKeyboardMarkup(keyboard)
@@ -63,7 +72,7 @@ async def set_background_phase_2(update: Update, context: ContextTypes.DEFAULT_T
     response = update.callback_query
     await response.answer() 
 
-    if response.data == "cancel":
+    if response.data == "Cancel":
         await response.edit_message_text(text = "Operation canceled.")
 
     else:
